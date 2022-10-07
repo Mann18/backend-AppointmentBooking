@@ -23,7 +23,7 @@ const feedback = new Schema({
 })
 
 const appointmentSchema = new Schema({
-    doctorId : {
+    officerId : {
         required: true,
         type: String
     },
@@ -35,7 +35,7 @@ const appointmentSchema = new Schema({
         required: true,
         type: String
     },
-    patientId : {
+    citizenId : {
         required: true,
         type: String
     },
@@ -45,13 +45,13 @@ const appointmentSchema = new Schema({
     slotTime : {
         type: String
     },
-    doctorName : {
+    officerName : {
         type : String
     },
-    doctorEmail : {
+    officerEmail : {
         type : String
     },
-    patientName : {
+    citizenName : {
         type : String
     },
     googleMeetLink : {

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const patientSchema = new Schema({
+const citizenSchema = new Schema({
     googleId: {
         type: String,
         required: true,
@@ -22,6 +22,6 @@ const patientSchema = new Schema({
     }
 });
 
-const Citizen = mongoose.model('Citizen', patientSchema);
+const Citizen = mongoose.model('Citizen', citizenSchema);
 
 module.exports = Citizen;

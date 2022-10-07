@@ -1,5 +1,5 @@
 process.env.NODE_ENV = 'test'
-const Patient = require('../models/patient.model');
+const citizen = require('../models/citizen.model');
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -8,19 +8,19 @@ const expect = chai.expect;
 
 chai.use(chaiHttp);
 
-describe('Patients', () => {
+describe('citizens', () => {
     before((done) => {  //Before each test we empty the database
-        Patient.deleteMany({}, (err) => {
+        citizen.deleteMany({}, (err) => {
             if (err) done(err);
             done();
         });
     });
 
-    //Test GET for Patients
-    describe('/GET Patient', () => {
-        it('GET all the Patients', (done) => {
+    //Test GET for citizens
+    describe('/GET citizen', () => {
+        it('GET all the citizens', (done) => {
             chai.request(server)
-                .get('/patients')
+                .get('/citizens')
                 .end((err, res) => {
                     if (err) {
                         done(err)
@@ -32,16 +32,16 @@ describe('Patients', () => {
         });
     });
 
-    //Test for /POST Patient/add
-    describe('/POST Patient', () => {
-        it('POST a Patient at patients/add', (done) => {
-            const newPatient = new Patient({
+    //Test for /POST citizen/add
+    describe('/POST citizen', () => {
+        it('POST a citizen at citizens/add', (done) => {
+            const newcitizen = new citizen({
                 googleId: "testGoogleId"
             });
 
             chai.request(server)
-                .post('/patients/add')
-                .send(newPatient)
+                .post('/citizens/add')
+                .send(newcitizen)
                 .end((err, res) => {
                     if (err) {
                         done(err)
@@ -55,7 +55,7 @@ describe('Patients', () => {
     describe('/PUT', () => {
         it('PUT request to update the data', (done) => {
             chai.request(server)
-            .put('/patients/update-phone')
+            .put('/citizens/update-phone')
             .send({
                 googleId: "testGoogleId",
                 phoneNumber: "test37438243280432432432",
@@ -71,16 +71,16 @@ describe('Patients', () => {
         })
     })
 
-    //Test for /POST Patient/add
-    describe('/POST Patient', () => {
-        it('POST a Patient at patients/add with a duplicate key', (done) => {
-            const newPatient = new Patient({
+    //Test for /POST citizen/add
+    describe('/POST citizen', () => {
+        it('POST a citizen at citizens/add with a duplicate key', (done) => {
+            const newcitizen = new citizen({
                 googleId: "testGoogleId"
             });
 
             chai.request(server)
-                .post('/patients/add')
-                .send(newPatient)
+                .post('/citizens/add')
+                .send(newcitizen)
                 .end((err, res) => {
                     if (err) {
                         // console.log(err);
@@ -92,11 +92,11 @@ describe('Patients', () => {
         });
     });
 
-    //Test GET for Patients
-    describe('/GET Patient', () => {
-        it('GET all the Patients', (done) => {
+    //Test GET for citizens
+    describe('/GET citizen', () => {
+        it('GET all the citizens', (done) => {
             chai.request(server)
-                .get('/patients')
+                .get('/citizens')
                 .end((err, res) => {
                     if (err) {
                         console.log(err)
