@@ -1,5 +1,5 @@
 process.env.NODE_ENV = 'test'
-const Doctor = require('../models/doctor.model');
+const officer = require('../models/officer.model');
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -8,19 +8,19 @@ const expect = chai.expect;
 
 chai.use(chaiHttp);
 
-describe('Doctors', () => {
+describe('officers', () => {
     before((done) => {  //Before each test we empty the database
-        Doctor.deleteMany({}, (err) => {
+        officer.deleteMany({}, (err) => {
             if (err) done(err);
             done();
         });
     });
 
-    //Test GET for Doctors
-    describe('/GET Doctor', () => {
-        it('GET all the Doctors', (done) => {
+    //Test GET for officers
+    describe('/GET officer', () => {
+        it('GET all the officers', (done) => {
             chai.request(server)
-                .get('/doctors')
+                .get('/officers')
                 .end((err, res) => {
                     if (err) {
                         done(err)
@@ -32,17 +32,17 @@ describe('Doctors', () => {
         });
     });
 
-    //Test for /POST Doctor/add
-    describe('/POST Doctor', () => {
-        it('POST a Doctor at doctors/add', (done) => {
-            const newDoctor = new Doctor({
+    //Test for /POST officer/add
+    describe('/POST officer', () => {
+        it('POST a officer at officers/add', (done) => {
+            const newofficer = new officer({
                 username: "testUsername",
                 password: "testPassword"
             });
 
             chai.request(server)
-                .post('/doctors/add')
-                .send(newDoctor)
+                .post('/officers/add')
+                .send(newofficer)
                 .end((err, res) => {
                     if (err) {
                         done(err)
@@ -54,9 +54,9 @@ describe('Doctors', () => {
     });
 
     describe('/PUT', () => {
-        it('PUT request to update the doctor data', (done) => {
+        it('PUT request to update the officer data', (done) => {
             chai.request(server)
-            .put('/doctors/update')
+            .put('/officers/update')
             .send({
                 username: "testUsername",
                 phoneNumber: "test37438243280432432432",
@@ -74,16 +74,16 @@ describe('Doctors', () => {
         })
     })
 
-    // Test to add a doctor with duplicate key
-    describe('/POST Doctor', () => {
-        it('POST a doctor at doctors/add with a duplicate key', (done) => {
-            const newDoctor = new Doctor({
+    // Test to add a officer with duplicate key
+    describe('/POST officer', () => {
+        it('POST a officer at officers/add with a duplicate key', (done) => {
+            const newofficer = new officer({
                 username: "testUsername"
             });
 
             chai.request(server)
-                .post('/doctors/add')
-                .send(newDoctor)
+                .post('/officers/add')
+                .send(newofficer)
                 .end((err, res) => {
                     if (err) {
                         done(err)
@@ -94,11 +94,11 @@ describe('Doctors', () => {
         });
     });
 
-    //Test GET for Doctors
-    describe('/GET Doctor', () => {
-        it('GET all the Doctors', (done) => {
+    //Test GET for officers
+    describe('/GET officer', () => {
+        it('GET all the officers', (done) => {
             chai.request(server)
-                .get('/doctors')
+                .get('/officers')
                 .end((err, res) => {
                     if (err) {
                         console.log(err)

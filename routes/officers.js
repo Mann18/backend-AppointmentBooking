@@ -1,9 +1,9 @@
 const router = require("express").Router();
-const doctors = require("../models/doctor.model");
+const officers = require("../models/officer.model");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const appointmentImport = require("../models/appointment.model");
-const { Doctor, Slot, DateSchedule } = doctors;
+const { Officer, Slot, DateSchedule } = officers;
 const { Appointment, Feedback } = appointmentImport;
 const bcrypt = require('../bcrypt/bcrypt');
 
@@ -27,19 +27,19 @@ function createDate(date) {
 	});
 }
 
-// To get all the doctors
+// To get all the officers
 // **ONLY FOR TESTING**
 router.route("/").get((req, res) => {
-	Doctor.find()
-		.then((doctors) => {
-			res.json(doctors);
+	Officer.find()
+		.then((officers) => {
+			res.json(officers);
 		})
 		.catch((err) => {
 			res.status(400).json(`Error : ${err}`);
 		});
 });
 
-// To add a doctor
+// To add a officer
 router.route("/add").post((req, res) => {
 	const username = req.body.username; // Required.. can't be undefined
 	const password = req.body.password;
@@ -48,7 +48,7 @@ router.route("/add").post((req, res) => {
 	const specialization = req.body.specialization;
 	const feesPerSession = req.body.feesPerSession;
 
-	const newDoctor = new Doctor({
+	const newofficer = new Officer({
 		username,
 		password,
 		name,
@@ -57,11 +57,11 @@ router.route("/add").post((req, res) => {
 		feesPerSession,
 	});
 
-	newDoctor
+	newofficer
 		.save()
 		.then(() => {
-			res.json("Doctor added");
-			// console.log(`${newDoctor} added!`)
+			res.json("Officer added");
+			// console.log(`${newofficer} added!`)
 		})
 		.catch((err) => {
 			res.status(400).json(`Error : ${err}`);
@@ -69,22 +69,22 @@ router.route("/add").post((req, res) => {
 		});
 });
 
-// To update a doctor
+// To update a officer
 router.route("/update").put((req, res) => {
 	const username = req.body.username; // Required.. can't be undefined
 
-	Doctor.findOne({ username: username }).then((doctor) => {
-		if (doctor) {
-			doctor.name = req.body.name;
-			doctor.phoneNumber = req.body.phoneNumber;
-			doctor.specialization = req.body.specialization;
-			doctor.feesPerSession = req.body.feesPerSession;
+	officer.findOne({ username: username }).then((officer) => {
+		if (officer) {
+			officer.name = req.body.name;
+			officer.phoneNumber = req.body.phoneNumber;
+			officer.specialization = req.body.specialization;
+			officer.feesPerSession = req.body.feesPerSession;
 
-			doctor
+			officer
 				.save()
 				.then(() => {
-					res.json("Doctor updated");
-					// console.log(`${doctor} updated!`)
+					res.json("officer updated");
+					// console.log(`${officer} updated!`)
 				})
 				.catch((err) => {
 					res.status(400).json(`Error : ${err}`);
@@ -94,7 +94,7 @@ router.route("/update").put((req, res) => {
 	});
 });
 
-// Doctor login
+// officer login
 router.route("/login").post(async (req, res) => {
 	try {
 		const username = req.body.username;
@@ -108,20 +108,20 @@ router.route("/login").post(async (req, res) => {
 		// Encrypted password after hashing operation
 		const encryptedPassword = bcrypt.hash(plainTextPassword, passwordSalt)
 
-		const doctor = await Doctor.findOne({
+		const officer = await Officer.findOne({
 			username: username,
 			password: encryptedPassword,
 		});
 
-		console.log(doctor);
+		console.log(officer);
 
-		if (doctor === null) {
+		if (officer === null) {
 			return res.status(201).json({ message: "wrong username or password" });
 		}
 
-		// Doctor found, return the token to the client side
+		// officer found, return the token to the client side
 		const token = jwt.sign(
-			JSON.stringify(doctor),
+			JSON.stringify(officer),
 			process.env.KEY, 
 			{
 				algorithm: process.env.ALGORITHM,
@@ -139,23 +139,23 @@ router.route("/login").post(async (req, res) => {
 // To get the slots available for the date
 router.route("/get-slots").post(async (req, res) => {
 	try {
-		const id = req.body.doctorId; // Doctor's id
+		const id = req.body.officerId; // officer's id
 		const date = req.body.date; // Date to book
 
-		const doctor = await Doctor.findOne({ _id: id });
+		const officer = await Officer.findOne({ _id: id });
 
-		// Doctor not found
-		if (doctor === null) {
-			console.log("Doctor not found in the database!");
+		// officer not found
+		if (officer === null) {
+			console.log("officer not found in the database!");
 			return res.status(201).json({
-				message: "Doctor not found in the database!",
+				message: "officer not found in the database!",
 			});
 		}
 
-		// Doctor found
+		// officer found
 		// Find the date
 		let count = 0;
-		for (const i of doctor.dates) {
+		for (const i of officer.dates) {
 			if (i.date === date) {
 				return res.status(200).json(i);
 			}
@@ -166,14 +166,14 @@ router.route("/get-slots").post(async (req, res) => {
 
 		// Add new slots if date not found in the db
 		const dateSchedule = createDate(date);
-		const updatedDoctor = await Doctor.findOneAndUpdate(
-			{ _id: doctor._id },
+		const updatedOfficer = await Officer.findOneAndUpdate(
+			{ _id: officer._id },
 			{ $push: { dates: dateSchedule } },
 			{ new: true }
 		);
 
-		if (updatedDoctor) {
-			return res.status(200).json(updatedDoctor.dates[oldLength]);
+		if (updatedOfficer) {
+			return res.status(200).json(updatedOfficer.dates[oldLength]);
 		} else {
 			const err = { err: "an error occurred!" };
 			throw err;
@@ -187,31 +187,31 @@ router.route("/get-slots").post(async (req, res) => {
 });
 
 router.route("/book-slot").post((req, res) => {
-	const patientId = req.body.googleId; // Patient's google id
-	const patientName = req.body.patientName; // Patient's name
-	const doctorId = req.body.doctorId; // Doctor's id 606460d2e0dd28cc76d9b0f3 
+	const citizenId = req.body.googleId; // citizen's google id
+	const citizenName = req.body.citizenName; // citizen's name
+	const officerId = req.body.officerId; // officer's id 606460d2e0dd28cc76d9b0f3 
 	const slotId = req.body.slotId; // Id of that particular slot
 	const dateId = req.body.dateId; // Id of that particular date
 	const meetLink = "";
 
-	Doctor.findOne({ _id: doctorId }).then((doctor) => {
-		const date = doctor.dates.id(dateId);
+	Officer.findOne({ _id: officerId }).then((officer) => {
+		const date = officer.dates.id(dateId);
 		const slot = date.slots.id(slotId);
 		slot.isBooked = true;
-		doctor
+		officer
 			.save()
 			.then(() => {
 				// Create an entry in the appointment database
 				const newAppointment = new Appointment({
-					doctorId,
+					officerId,
 					dateId,
 					slotId,
-					patientId,
+					citizenId,
 					date: date.date,
 					slotTime: slot.time,
-					doctorName: doctor.name,
-					doctorEmail: doctor.email,
-					patientName: patientName,
+					officerName: officer.name,
+					officerEmail: officer.email,
+					citizenName: citizenName,
 					googleMeetLink: meetLink,
 					feedback: new Feedback()
 				});
@@ -239,9 +239,9 @@ router.route("/book-slot").post((req, res) => {
 
 router.route("/appointments").post(async (req, res) => {
 	try {
-		const doctorId = req.body.doctorId;
+		const officerId = req.body.officerId;
 		const appointments = await Appointment.find({
-			doctorId: doctorId,
+			officerId: officerId,
 		});
 		// res.status(200).json(appointments);
 		const sortedAppointments = appointments.sort((a, b) => {
@@ -282,9 +282,9 @@ router.route('/todays-appointments').post(async (req, res) => {
 		currDate += month < 10 ? ('-0' + month.toString()) : '-' + month.toString()
 		currDate += day < 10 ? ('-0' + day.toString()) : '-' + day.toString()
 
-		const doctorId = req.body.doctorId;
+		const officerId = req.body.officerId;
 
-		const appointments = await Appointment.find({ doctorId: doctorId, date: currDate });
+		const appointments = await Appointment.find({ officerId: officerId, date: currDate });
 
 		const sortedAppointments = appointments.sort((a, b) => {
 			return (
@@ -302,9 +302,9 @@ router.route('/todays-appointments').post(async (req, res) => {
 
 router.route('/previous-appointments').post(async (req, res) => {
 	try {
-		const doctorId = req.body.doctorId;
+		const officerId = req.body.officerId;
 
-		const appointments = await Appointment.find({ doctorId: doctorId });
+		const appointments = await Appointment.find({ officerId: officerId });
 
 		// Get current dateTime
 		const date = new Date()

@@ -1,12 +1,12 @@
 const router = require('express').Router();
-const Citizen = require('../models/patient.model');
+const Citizen = require('../models/citizen.model');
 const appointmentImport = require('../models/appointment.model');
 const jwt = require('jsonwebtoken');
 const stripe = require("stripe")("sk_test_51IabQNSCj4BydkZ38AsoDragCM19yaMzGyBVng5KUZnCNrxCJuj308HmdAvoRcUEe2PEdoORMosOaRz1Wl8UX0Gt00FCuSwYpz")
 const { v4: uuidv4 } = require('uuid');
 const { Appointment } = appointmentImport;
 
-// To get all the patients
+// To get all the citizens
 // ** ONLY FOR TESTING **
 router.route('/').get((req, res) => {
     Citizen.find().then(citizens => {
@@ -16,24 +16,24 @@ router.route('/').get((req, res) => {
     })
 })
 
-// To add a patient
+// To add a citizen
 router.route('/add').post((req, res) => {
     const googleId = req.body.googleId;
     const name = req.body.name;
     const picture = req.body.picture;
 
-    const newPatient = new Citizen({
+    const newcitizen = new Citizen({
         googleId, name, picture
     })
 
-    newPatient.save().then(() => {
+    newcitizen.save().then(() => {
         res.status(200).json('Citizen added');
     }).catch(err => {
         res.status(400).json(`Error : ${err}`);
     })
 })
 
-// To update a patient's phone number
+// To update a citizen's phone number
 router.route('/update-phone').put((req, res) => {
     const googleId = req.body.googleId;
 
@@ -61,13 +61,13 @@ router.route('/google-login').post(async (req, res) => {
         // Check if the user already exists in the database
         const citizen = await Citizen.findOne({ googleId: googleId });
 
-        // If the patient is not found
+        // If the citizen is not found
         if (citizen === null) {
             const { email, name, picture } = decoded;
-            const newPatient = new Citizen({
+            const newcitizen = new Citizen({
                 googleId, email, name, picture
             })
-            const savedPromise = await newPatient.save();
+            const savedPromise = await newcitizen.save();
             if (savedPromise) {
                 return res.status(200).json({ phoneNumberExists: false });
             }
@@ -81,7 +81,7 @@ router.route('/google-login').post(async (req, res) => {
             return res.status(200).json({ phoneNumberExists: false });
         }
 
-        // Patient's phone number already exists in the database
+        // citizen's phone number already exists in the database
         else {
             return res.status(200).json({ phoneNumberExists: true })
         }
@@ -92,7 +92,7 @@ router.route('/google-login').post(async (req, res) => {
     }
 })
 
-router.route('/getPatientDetails/:googleId').get(async (req, res) => {
+router.route('/getcitizenDetails/:googleId').get(async (req, res) => {
     try {
         const googleId = req.params.googleId;
         const citizen = await Citizen.findOne({ googleId: googleId });
@@ -113,7 +113,7 @@ router.route('/getPatientDetails/:googleId').get(async (req, res) => {
 router.route('/previous-appointments').post(async (req, res) => {
     try {
         const googleId = req.body.googleId;
-        const appointments = await Appointment.find({ patientId: googleId });
+        const appointments = await Appointment.find({ citizenId: googleId });
 
         // Get current dateTime
         const date = new Date()
@@ -149,7 +149,7 @@ router.route('/previous-appointments').post(async (req, res) => {
 router.route('/upcoming-appointments').post(async (req, res) => {
     try {
         const googleId = req.body.googleId;
-        const appointments = await Appointment.find({ patientId: googleId });
+        const appointments = await Appointment.find({ citizenId: googleId });
 
         // Get current dateTime
         const date = new Date()

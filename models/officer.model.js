@@ -19,7 +19,7 @@ const dateSchedule = new Schema({
     slots : [slotSchema]
 })
 
-const doctorSchema = new Schema({
+const officerSchema = new Schema({
     username: {
         type: String,
         required: true,
@@ -47,12 +47,12 @@ const doctorSchema = new Schema({
     dates : [dateSchedule]
 });
 
-const Doctor = mongoose.model('Doctor', doctorSchema);
+const Officer = mongoose.model('Officer', officerSchema);
 const Slot = mongoose.model('Slot', slotSchema);
 const DateSchedule = mongoose.model('DateSchedule', dateSchedule);
 
 module.exports = {
-    Doctor,
+    Officer,
     Slot,
     DateSchedule
 };

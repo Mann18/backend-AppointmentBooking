@@ -2,8 +2,8 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
-const patientsRouter = require('./routes/patients');
-const doctorsRotuer = require('./routes/doctors');
+const citizensRouter = require('./routes/citizens');
+const officersRotuer = require('./routes/officers');
 const appointmentRouter = require('./routes/appointments');
 require('dotenv').config();
  
@@ -16,8 +16,8 @@ app.use(cors(
     }
 ));
 
-app.use('/patients', patientsRouter);
-app.use('/doctors', doctorsRotuer);
+app.use('/citizens', citizensRouter);
+app.use('/officers', officersRotuer);
 app.use('/appointments', appointmentRouter);
 
 const port = process.env.PORT || 5000;
