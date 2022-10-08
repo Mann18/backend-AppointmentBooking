@@ -12,15 +12,35 @@ function createDate(date) {
 		date: date,
 		slots: [
 			new Slot({
-				time: "09:00:00",
+				time: "14:00:00",
 				isBooked: false,
 			}),
 			new Slot({
-				time: "12:00:00",
+				time: "14:15:00",
+				isBooked: false,
+			}),
+			new Slot({
+				time: "14:30:00",
+				isBooked: false,
+			}),
+			new Slot({
+				time: "14:45:00",
 				isBooked: false,
 			}),
 			new Slot({
 				time: "15:00:00",
+				isBooked: false,
+			}),
+			new Slot({
+				time: "15:15:00",
+				isBooked: false,
+			}),
+			new Slot({
+				time: "15:30:00",
+				isBooked: false,
+			}),
+			new Slot({
+				time: "15:45:00",
 				isBooked: false,
 			}),
 		],
@@ -46,6 +66,7 @@ router.route("/add").post((req, res) => {
 	const name = req.body.name;
 	const phoneNumber = req.body.phoneNumber;
 	const specialization = req.body.specialization;
+	const designation = req.body.designation;
 	const feesPerSession = req.body.feesPerSession;
 
 	const newofficer = new Officer({
@@ -54,7 +75,8 @@ router.route("/add").post((req, res) => {
 		name,
 		phoneNumber,
 		specialization,
-		feesPerSession,
+		designation,
+		feesPerSession
 	});
 
 	newofficer
@@ -73,12 +95,13 @@ router.route("/add").post((req, res) => {
 router.route("/update").put((req, res) => {
 	const username = req.body.username; // Required.. can't be undefined
 
-	officer.findOne({ username: username }).then((officer) => {
+	Officer.findOne({ username: username }).then((officer) => {
 		if (officer) {
 			officer.name = req.body.name;
 			officer.phoneNumber = req.body.phoneNumber;
 			officer.specialization = req.body.specialization;
 			officer.feesPerSession = req.body.feesPerSession;
+			officer.designation = req.body.designation;
 
 			officer
 				.save()

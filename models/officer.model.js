@@ -41,6 +41,9 @@ const officerSchema = new Schema({
     specialization: {
         type: String
     },
+    designation: {
+        type: String
+    },
     feesPerSession: {
         type: String
     },
