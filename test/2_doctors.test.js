@@ -95,4 +95,21 @@ describe('officers', () => {
     });
 
     //Test GET for officers
+    describe('/GET officer', () => {
+        it('GET all the officers', (done) => {
+            chai.request(server)
+                .get('/officers')
+                .end((err, res) => {
+                    if (err) {
+                        console.log(err)
+                        done(err);
+                    }
+                    expect(res).to.have.status(200);
+                    expect(res.body.length).eql(1);
+                    done()
+                });
+        });
+    });
+    
+});
     
