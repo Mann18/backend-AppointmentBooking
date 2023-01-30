@@ -54,6 +54,9 @@ const appointmentSchema = new Schema({
     citizenName : {
         type : String
     },
+    reason : {
+        type : String
+    },
     googleMeetLink : {
         type : String
     },

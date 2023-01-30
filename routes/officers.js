@@ -212,6 +212,7 @@ router.route("/get-slots").post(async (req, res) => {
 router.route("/book-slot").post((req, res) => {
 	const citizenId = req.body.googleId; // citizen's google id
 	const citizenName = req.body.citizenName; // citizen's name
+	const reason=req.body.reason;
 	const officerId = req.body.officerId; // officer's id 606460d2e0dd28cc76d9b0f3 
 	const slotId = req.body.slotId; // Id of that particular slot
 	const dateId = req.body.dateId; // Id of that particular date
@@ -235,6 +236,7 @@ router.route("/book-slot").post((req, res) => {
 					officerName: officer.name,
 					officerEmail: officer.email,
 					citizenName: citizenName,
+					reason:reason,
 					googleMeetLink: meetLink,
 					feedback: new Feedback()
 				});
@@ -304,10 +306,9 @@ router.route('/todays-appointments').post(async (req, res) => {
 
 		currDate += month < 10 ? ('-0' + month.toString()) : '-' + month.toString()
 		currDate += day < 10 ? ('-0' + day.toString()) : '-' + day.toString()
-
 		const officerId = req.body.officerId;
 
-		const appointments = await Appointment.find({ officerId: officerId, date: currDate });
+		const appointments = await Appointment.find({ officerId: officerId, date:{$gte: currDate} });
 
 		const sortedAppointments = appointments.sort((a, b) => {
 			return (

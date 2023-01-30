@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const appointmentImport = require("../models/appointment.model");
 const { Appointment, Feedback } = appointmentImport;
-
+const ObjectId = require("mongodb").ObjectId;
 router.route('/add-meet-link').put((req, res) => {
     const meetLink = req.body.meetLink;
     const appointmentId = req.body.appointmentId;
@@ -47,5 +47,15 @@ router.route('/feedback').put((req, res) => {
         res.status(400).json(err);
     })
 })
+router.route("/cancel/:id").delete((req, response) => {
+	
+	let myquery = { _id: ObjectId( req.params.id )};
+	Appointment.deleteOne(myquery, function (err, obj) {
+	  if (err) throw err;
+	  console.log("1 document deleted");
+	  response.json(obj);
+	});
+   });
+
 
 module.exports = router;

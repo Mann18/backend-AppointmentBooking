@@ -110,6 +110,24 @@ router.route('/getcitizenDetails/:googleId').get(async (req, res) => {
     }
 })
 
+router.route('/getcitizenEmail/:citizenId').get(async (req, res) => {
+    try {
+        const googleId = req.params.citizenId;
+        const citizen = await Citizen.findOne({ googleId: googleId });
+
+        if (citizen) {
+            return res.status(200).json(citizen);
+        }
+        else {
+            return res.status(201).json({ message: "Citizen not found!" });
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(400).json({ message: err });
+    }
+})
+
 router.route('/previous-appointments').post(async (req, res) => {
     try {
         const googleId = req.body.googleId;
